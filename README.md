@@ -1,17 +1,20 @@
-# Coding Challenge
+# USGS Earthquakes JSON API
 
-Create an JSON API to the "Real-time, worldwide earthquake list for the past 7 days".
+This is an extremely basic app which provides only a JSON API of [the USGS resource called 'Real-time, worldwide earthquake list for the past 7 days'][1]
 
-    https://explore.data.gov/Geography-and-Environment/Worldwide-M1-Earthquakes-Past-7-Days/7tag-iwnu
-    http://earthquake.usgs.gov/earthquakes/catalogs/eqs7day-M1.txt
+[1]: https://explore.data.gov/Geography-and-Environment/Worldwide-M1-Earthquakes-Past-7-Days/7tag-iwnu
 
+## API:
 
-### 1. Write a rake task to download the latest CSV of earthquakes and import it into a suitable database.
+The API is a read-only collection resource &ndash; `earthquakes` &ndash; which responds to GET requests and accepts
+the following optional parameters:
 
-This rake task should be idempotent. It should only import records that haven't been imported already. Ideally this task would run
-once a minute to import the latest earthquakes.
+- `on` &ndash; expects a Unix timestamp, representing the entire day on which that timestamp occurs; restricts results to only those which took place on the specified day.
+- `since` &ndash; expects a Unix timestamp; restricts results to only those which occurred after this time
+- `over` &ndash; expects a decimal number representing a Richter magnitude (thus sensible values are 2.0&ndash;10.0); restricts results to only those which were measured higher than the specified magnitude
+- `near` &ndash; expects a comma-separated pair of decimal numbers, representing a geographical location as latitude and longitude, respectively; restricts results to only those with epicenters within a 5-mile radius of the specified location
 
-### 2. Write a HTTP JSON API for this data
+## EXAMPLES:
 
     GET /earthquakes.json
     # Returns all earthquakes
@@ -28,26 +31,15 @@ once a minute to import the latest earthquakes.
     GET /earthquakes.json?near=36.6702,-114.8870
     # Returns all earthquakes within 5 miles of lat: 36.6702, lng: -114.8870
 
-    NOTES:
-    
-    The endpoint should be able to take any combination of GET params, and
-    filter the results properly. If on and since are both present, it should
-    return results since the timestamp until the end of that day.
-    
-    EXAMPLES:
-    
+Note that if `on` and `since` are both specified, it will return results since the timestamp until the end of that day.
+
     GET /earthquakes.json?over=3.2&near=36.6702,-114.8870&since=1364582194
     # Returns all earthquakes over 3.2 magnitude within 5 miles of 36.6702,-114.8870 since 2013-03-29 18:36:34 UTC
 
     GET /earthquakes.json?over=3.2&on=1364582194&since=1364582194
     # Returns all earthquakes over 3.2 magnitude between 2013-03-29 18:36:34 UTC and 2013-03-29 23:59:59 UTC
 
-### 3. Write tests/specs in your preferred test library
 
-Both the API and import task should be tested.
+## Why?
 
-### Bonus
-
-Bonus points if open sourced on github and running on heroku. Also feel free to
-add any additional features you think would be interesting or cool. Be creative; don't
-be afraid to show off!
+This was written for a code challenge; see [MANDATE.md](MANDATE.md)
