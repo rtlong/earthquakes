@@ -19,7 +19,7 @@ CREATE UNIQUE INDEX index_earthquakes_on_source_and_eqid ON earthquakes USING bt
 
 class Earthquake < ActiveRecord::Base
   validates :source, presence: true, length: {in: 1..2}
-  validates :eqid, presence: true, uniqueness: { scope: :source }
+  validates :eqid, presence: true, uniqueness: { scope: :source }, length: {in: 1..30}
   validates :longitude, numericality: true
   validates :latitude, numericality: true
   validates :version, numericality: true
