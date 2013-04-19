@@ -17,8 +17,13 @@ gem 'thin'
 group :development do
   gem 'pry-rails'
   gem 'pry-doc'
+  gem 'guard'
+  gem 'guard-rspec'
+  gem 'rb-inotify'
 end
 
 group :development, :test do
-  gem 'minitest-rails', '~> 0.9.2'
+  gem 'rspec-rails'
+  gem 'factory_girl_rails'
+  gem 'database_cleaner'
 end
