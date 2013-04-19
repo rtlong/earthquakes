@@ -25,5 +25,6 @@ end
 group :development, :test do
   gem 'rspec-rails'
   gem 'factory_girl_rails'
-  gem 'database_cleaner'
+  gem 'database_cleaner', '1.0.0.RC1'
+  gem 'shoulda-matchers'
 end
