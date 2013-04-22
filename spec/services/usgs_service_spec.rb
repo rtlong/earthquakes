@@ -1,19 +1,34 @@
 require 'spec_helper'
 
 EXAMPLE_URL = 'http://example.com/earthquakes'
-CSV_EXAMPLES = YAML.load_file(Rails.root.join('spec/fixtures/usgs_service/sample_csv_fragments.yml')).tap{ puts 'READ YAML'}
+CSV_EXAMPLES = YAML.load_file(Rails.root.join('spec/fixtures/usgs_service/sample_csv_fragments.yml'))
 
 describe USGSService do
   let(:service) { USGSService.new(EXAMPLE_URL) }
   subject { service }
 
-  context '.latest' do
+  context 'class-level interface' do
     subject { USGSService }
-    it 'instantiates a new USGSService with the 7-day URL' do
-      subject.should_receive(:new).with(USGSService::EQS7DAY)
-      subject.latest
+    describe '.latest' do
+      it 'instantiates a new USGSService with the 7-day URL' do
+        subject.should_receive(:new).with(USGSService::EQS7DAY)
+        subject.latest
+      end
+    end
+    describe '.new' do
+      it 'returns new instance, given valid URI as parameter' do
+        subject.new('uri://resource').should be_a(USGSService)
+      end
+      it 'raises an error given wrong number of params' do
+        expect { subject.new() }.to raise_exception
+        expect { subject.new('uri://resource', true) }.to raise_exception
+      end
+      it 'raises an error given bad URI' do
+        expect { subject.new('bad uri') }.to raise_exception
+      end
     end
   end
+
 
   describe '#data_url' do
     subject { service.data_url }

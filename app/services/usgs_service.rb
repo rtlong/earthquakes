@@ -1,13 +1,18 @@
 require 'open-uri'
 require 'csv'
 
+
+# This class is responsible for retrieving the raw earthquakes data from USGS via CSV.
 class USGSService
+  # The 7-day recent earthquakes resource
   EQS7DAY = 'http://earthquake.usgs.gov/earthquakes/catalogs/eqs7day-M1.txt'
 
+  # Instantiate with the 7-day resource URL
   def self.latest
     new(EQS7DAY)
   end
 
+  # @param data_url [#to_s] - valid URI to the USGS CSV resource to use for this retrieval
   def initialize(data_url)
     @data_url = URI.parse(data_url)
   end
