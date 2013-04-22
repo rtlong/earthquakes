@@ -11,10 +11,11 @@ class USGSService
   def initialize(data_url)
     @data_url = URI.parse(data_url)
   end
+
   attr_reader :data_url
 
   def parse
-    csv.map { |row| convert_row(row) }
+    csv.map { |row| convert_row(row) }.compact
   end
 
   def convert_row(row)
@@ -30,10 +31,13 @@ class USGSService
         nst: row[:nst].to_i,
         region: row[:region]
     }
+  rescue => ex
+    log :error, "%s - %s (%s) - %s" % [ex.class, ex.message, row.inspect, ex.backtrace.join(?|)]
+    return nil
   end
 
   def csv
-    CSV.new data, headers: true, header_converters: [:downcase, :symbol]
+    @csv ||= CSV.new(data, headers: true, header_converters: [:downcase, :symbol])
   end
 
   def data
@@ -52,5 +56,11 @@ class USGSService
         raise
       end
     end
+  end
+
+  private
+
+  def log(level, message)
+    Rails.logger.send level, "[USGS Import] #{message}"
   end
 end
