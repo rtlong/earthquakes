@@ -1,0 +1,22 @@
+---
+3_rows_2_valid: |
+  Src,Eqid,Version,Datetime,Lat,Lon,Magnitude,Depth,NST,Region
+  ci,15329401,2,"Friday, April 19, 2013 07:16:30 UTC",32.8752,-116.2557,1.6,6.20,40,"Southern California"
+  invalid,data,not,going,to,work
+  ak,10691420,3,"Thursday, April 11, 2013 12:35:04 UTC",60.1563,-140.7970,1.5,15.70,17,"Southern Yukon Territory, Canada"
+
+sample_parsed_row_data:
+  :src: 'ci'
+  :eqid: '12321'
+  :version: '1'
+  :datetime: 'Friday, April 19, 2013 06:47:12 UTC'
+  :lat: '39.8283'
+  :lon: '-122.8617'
+  :magnitude: '1.6'
+  :depth: '3.40'
+  :nst: ' 7'
+  :region: 'Northern California'
+
+csv_parse_example: |
+  test,CSV,data
+  1,2,3

@@ -2,7 +2,7 @@ require 'open-uri'
 require 'csv'
 
 class USGSService
-  EQS7DAY='http://earthquake.usgs.gov/earthquakes/catalogs/eqs7day-M1.txt'
+  EQS7DAY = 'http://earthquake.usgs.gov/earthquakes/catalogs/eqs7day-M1.txt'
 
   def self.latest
     new(EQS7DAY)

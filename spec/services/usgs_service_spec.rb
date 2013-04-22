@@ -1,9 +1,10 @@
 require 'spec_helper'
 
 EXAMPLE_URL = 'http://example.com/earthquakes'
+CSV_EXAMPLES = YAML.load_file(Rails.root.join('spec/fixtures/usgs_service/sample_csv_fragments.yml')).tap{ puts 'READ YAML'}
 
 describe USGSService do
-  let(:service){ USGSService.new(EXAMPLE_URL) }
+  let(:service) { USGSService.new(EXAMPLE_URL) }
   subject { service }
 
   context '.latest' do
@@ -14,7 +15,6 @@ describe USGSService do
     end
   end
 
-
   describe '#data_url' do
     subject { service.data_url }
     it 'should be a URI parsed from the value given at initialization' do
@@ -24,53 +24,48 @@ describe USGSService do
 
   describe '#convert_row' do
     subject do
-      service.convert_row src: 'test',
-                          eqid: '12321',
-                          version: '1',
-                          datetime:"Friday, April 19, 2013 06:47:12 UTC",
-                          lat:"39.8283",
-                          lon:"-122.8617",
-                          magnitude:"1.6",
-                          depth:"3.40",
-                          nst:" 7",
-                          region:"Northern California"
+      data = CSV_EXAMPLES['sample_parsed_row_data'] || raise
+      sample_row = CSV::Row.new(data.keys, data.values)
+      service.convert_row(sample_row)
     end
-    its([:source]){ should == 'test' }
-    its([:eqid]){ should == '12321' }
-    its([:version]){ should == 1 }
-    its([:date_time]){ should == DateTime.new(2013,4,19,06,47,12) }
-    its([:latitude]){ should == 39.8283 }
-    its([:longitude]){ should == -122.8617 }
-    its([:depth]){ should == 3.4 }
-    its([:nst]){ should == 7 }
-    its([:region]){ should == 'Northern California' }
+
+    its([:source]) { should == 'ci' }
+    its([:eqid]) { should == '12321' }
+    its([:version]) { should == 1 }
+    its([:date_time]) { should == DateTime.new(2013, 4, 19, 06, 47, 12) }
+    its([:latitude]) { should == 39.8283 }
+    its([:longitude]) { should == -122.8617 }
+    its([:depth]) { should == 3.4 }
+    its([:nst]) { should == 7 }
+    its([:region]) { should == 'Northern California' }
   end
 
   describe '#parse' do
     before do
-      service.stub(:data) do
-        "Src,Eqid,Version,Datetime,Lat,Lon,Magnitude,Depth,NST,Region\n"
-        'ci,15329401,2,"Friday, April 19, 2013 07:16:30 UTC",32.8752,-116.2557,1.6,6.20,40,"Southern California"'
-      end
+      service.stub(:data) { CSV_EXAMPLES['3_rows_2_valid'] || raise }
     end
 
-    subject { service.parse }
+    subject!{ service.parse }
     it { should be_a_kind_of(Enumerable) }
+    it { should have_exactly(2).items }
   end
 
   describe '#csv' do
     subject { service.csv }
     before do
-      service.stub(:data) { "test,CSV,data\n1,2,3" }
+      service.stub(:data) { CSV_EXAMPLES['csv_parse_example'] || raise }
     end
     it { should respond_to(:each) }
-    it('should invoke #data'){ service.should_receive(:data); subject }
+    it('should invoke #data') do
+      service.should_receive(:data)
+      subject
+    end
 
     describe 'each item' do
       subject { service.csv.first }
       it { should be_a CSV::Row }
       it 'should respond to [] with symbolized header names' do
-        subject[:csv] = '2'
+        subject[:csv].should == '2'
       end
     end
   end
