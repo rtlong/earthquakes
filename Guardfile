@@ -16,7 +16,7 @@ guard 'rspec', cli: '--format documentation' do
       spec/acceptance/#{m[1]}_spec.rb
     ]
   end
-  watch(%r{^spec/support/(.+)\.rb$}) { 'spec' }
+  watch(%r{^spec/(fixtures|factories|support)/(.+)\.(rb|yml)$}) { 'spec' }
   watch('config/routes.rb') { 'spec/routing' }
   watch('app/controllers/application_controller.rb') { 'spec/controllers' }
 

@@ -26,4 +26,6 @@ class Earthquake < ActiveRecord::Base
   validates :magnitude, numericality: true
   validates :nst, numericality: true
   validates :depth, numericality: true
+
+  #scope :lt_version, proc{|version| where(arel_table[:version].lt(version)) }
 end

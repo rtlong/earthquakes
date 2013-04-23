@@ -1,10 +1,10 @@
 require 'spec_helper'
 
-EXAMPLE_URL = 'http://example.com/earthquakes'
 CSV_EXAMPLES = YAML.load_file(Rails.root.join('spec/fixtures/usgs_service/sample_csv_fragments.yml'))
 
+
 describe USGSService do
-  let(:service) { USGSService.new(EXAMPLE_URL) }
+  let(:service) { FactoryGirl.build :usgs_service }
   subject { service }
 
   context 'class-level interface' do
@@ -31,9 +31,10 @@ describe USGSService do
 
 
   describe '#data_url' do
-    subject { service.data_url }
+    subject { USGSService.new 'uri://example' }
+
     it 'should be a URI parsed from the value given at initialization' do
-      should == URI.parse(EXAMPLE_URL)
+      subject.data_url.should == URI.parse('uri://example')
     end
   end
 
@@ -56,20 +57,12 @@ describe USGSService do
   end
 
   describe '#all' do
-    before do
-      service.stub(:data) { CSV_EXAMPLES['3_rows_2_valid'] || raise }
-    end
-
     subject { service.all }
     it { should be_a_kind_of(Enumerable) }
-    it { should have_exactly(2).items }
+    it { should have_exactly(3).items }
   end
 
   describe '#each' do
-    before do
-      service.stub(:data) { CSV_EXAMPLES['3_rows_2_valid'] || raise }
-    end
-
     it { subject.each.should be_an(Enumerator) }
     it 'should accept a block and pass to it the records' do
       values = []
@@ -80,12 +73,9 @@ describe USGSService do
 
   describe '#csv' do
     subject { service.csv }
-    before do
-      service.stub(:data) { CSV_EXAMPLES['csv_parse_example'] || raise }
-    end
     it { should respond_to(:each) }
     it('should invoke #data') do
-      service.should_receive(:data)
+      service.should_receive(:csv)
       subject
     end
 
@@ -93,18 +83,14 @@ describe USGSService do
       subject { service.csv.first }
       it { should be_a CSV::Row }
       it 'should respond to [] with symbolized header names' do
-        subject[:csv].should == '2'
+        subject[:src].should == 'ci'
       end
     end
   end
 
   describe '#data' do
-    before do
-      stub_request(:get, service.data_url.to_s).to_return(body: 'csv,data')
-    end
     it 'returns the body of the response from GET-ing #data_url' do
-      service.data.should == 'csv,data'
+      subject.data.should == CSV_EXAMPLES['sample_set']
     end
-
   end
 end

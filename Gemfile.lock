@@ -41,6 +41,7 @@ GEM
     factory_girl_rails (4.2.1)
       factory_girl (~> 4.2.0)
       railties (>= 3.0.0)
+    ffaker (1.15.0)
     ffi (1.7.0)
     formatador (0.2.4)
     guard (1.7.0)
@@ -155,6 +156,7 @@ PLATFORMS
 DEPENDENCIES
   database_cleaner (= 1.0.0.RC1)
   factory_girl_rails
+  ffaker
   guard
   guard-rspec
   jbuilder (~> 1.0.1)
