@@ -14,11 +14,12 @@ guard 'rspec', cli: '--format documentation' do
       spec/routing/#{m[1]}_routing_spec.rb
       spec/#{m[2]}s/#{m[1]}_#{m[2]}_spec.rb
       spec/acceptance/#{m[1]}_spec.rb
+      spec/requests/#{m[1]}_spec.rb
     ]
   end
   watch(%r{^spec/(fixtures|factories|support)/(.+)\.(rb|yml)$}) { 'spec' }
   watch('config/routes.rb') { 'spec/routing' }
-  watch('app/controllers/application_controller.rb') { 'spec/controllers' }
+  watch('app/controllers/application_controller.rb') { 'spec/requests' }
 
   # Capybara features specs
   watch(%r{^app/views/(.+)/.*\.(erb|haml)$}) { |m| "spec/features/#{m[1]}_spec.rb" }

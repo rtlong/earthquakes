@@ -9,10 +9,9 @@ gem 'rails', '4.0.0.beta1'
 gem 'rails-api'
 gem 'pg'
 
-# Build JSON APIs with ease. Read more: https://github.com/rails/jbuilder
-gem 'jbuilder', '~> 1.0.1'
-
 gem 'thin'
+
+gem 'oj'
 
 group :development do
   gem 'pry-rails'
@@ -24,10 +23,10 @@ end
 
 group :development, :test do
   gem 'rspec-rails'
-  gem 'factory_girl_rails'
 end
 
 group :test do
+  gem 'factory_girl_rails'
   gem 'database_cleaner', '1.0.0.RC1'
   gem 'shoulda-matchers'
   gem 'vcr'

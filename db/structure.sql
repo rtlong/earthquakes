@@ -66,10 +66,10 @@ CREATE TABLE earthquakes (
     eqid character varying(30) NOT NULL,
     version integer DEFAULT 0,
     date_time timestamp without time zone,
-    latitude double precision,
-    longitude double precision,
-    magnitude real,
-    depth real,
+    latitude numeric(7,4),
+    longitude numeric(7,4),
+    magnitude numeric(3,1),
+    depth numeric(6,1),
     nst integer,
     region character varying(255),
     created_at timestamp without time zone,
@@ -143,3 +143,5 @@ SET search_path TO "$user",public;
 INSERT INTO schema_migrations (version) VALUES ('20130418062356');
 
 INSERT INTO schema_migrations (version) VALUES ('20130418064812');
+
+INSERT INTO schema_migrations (version) VALUES ('20130423074321');
