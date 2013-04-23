@@ -43,6 +43,9 @@ RSpec.configure do |config|
     DatabaseCleaner.clean
   end
 
+  config.alias_it_should_behave_like_to :it_looks_like, 'looks like:'
+
+
 end
 
 require 'vcr'

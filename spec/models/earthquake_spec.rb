@@ -36,26 +36,32 @@ describe Earthquake do
   #  end
   #end
 
-  describe '.for_serialization' do
-    it { Earthquake.should respond_to :for_serialization }
+  describe '.minimal' do
+    it { Earthquake.should respond_to :minimal }
     it 'should select only the required columns for dump' do
-      Earthquake.for_serialization.select_values.should == Earthquake.column_names.map(&:to_sym) - [:id, :created_at, :updated_at]
+      Earthquake.minimal.select_values.sort.should == Earthquake::API_COLUMNS.sort
     end
   end
 
-  describe '.as_hashes' do
+  describe '.for_json' do
     before do
-      FactoryGirl.create_list(:earthquake, 3)
+      FactoryGirl.create_list(:earthquake, 3, source: 'us')
+      FactoryGirl.create(:earthquake, source: 'ak')
     end
+    it { Earthquake.for_json.should have_exactly(4).objects }
     it 'responds with an Array of Hashes' do
-      Earthquake.as_hashes.should be_an_instance_of(Array)
-      Earthquake.as_hashes.first.should be_an_instance_of(Hash)
+      ary = Earthquake.for_json
+      ary.should be_an_instance_of(Array)
+      ary.first.should be_an_instance_of(Hash)
     end
-    it 'uses the previous scope' do
-      Earthquake.select([:source, :nst]).as_hashes.first.keys.should == %w[source nst]
+    it 'respects the AReL scope: select()' do
+      Earthquake.select([:source, :nst]).for_json.first.keys.should == %w[source nst]
+    end
+    it 'respects the AReL scope: where()' do
+      Earthquake.where(source: 'ak').for_json.should have_exactly(1).object
     end
     it 'correctly type-casts the values' do
-      Earthquake.select([:source, :nst]).as_hashes.first.values.map(&:class).should == [String, Fixnum]
+      Earthquake.select([:source, :nst, :date_time, :magnitude]).for_json.first.values.map(&:class).should == [String, Fixnum, String, BigDecimal]
     end
   end
 

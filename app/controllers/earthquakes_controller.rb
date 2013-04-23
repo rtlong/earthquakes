@@ -3,8 +3,8 @@ class EarthquakesController < ApplicationController
 
   # GET /earthquakes.json
   def index
-    earthquakes = Earthquake.for_serialization.as_hashes
-    render json: Oj.dump(earthquakes.to_a, mode: :compat)
+    earthquakes = Earthquake.minimal.for_json
+    render json: Oj.dump(earthquakes) # using Oj directly for performance
   end
 
 end
