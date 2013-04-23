@@ -55,14 +55,27 @@ describe USGSService do
     its([:region]) { should == 'Northern California' }
   end
 
-  describe '#parse' do
+  describe '#all' do
     before do
       service.stub(:data) { CSV_EXAMPLES['3_rows_2_valid'] || raise }
     end
 
-    subject!{ service.parse }
+    subject { service.all }
     it { should be_a_kind_of(Enumerable) }
     it { should have_exactly(2).items }
+  end
+
+  describe '#each' do
+    before do
+      service.stub(:data) { CSV_EXAMPLES['3_rows_2_valid'] || raise }
+    end
+
+    it { subject.each.should be_an(Enumerator) }
+    it 'should accept a block and pass to it the records' do
+      values = []
+      subject.each { |r| values << r }
+      values.should == subject.all
+    end
   end
 
   describe '#csv' do
