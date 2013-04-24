@@ -30,9 +30,14 @@ class Earthquake < ActiveRecord::Base
   validates :nst, numericality: true
   validates :depth, numericality: true
 
-  #scope :lt_version, proc{|version| where(arel_table[:version].lt(version)) }
-
-  scope :minimal, proc { select(API_COLUMNS) }
+  scope :minimal, -> { select(API_COLUMNS) }
+  scope :magnitude_over, -> (mag) { where arel_table[:magnitude].gt(mag) }
+  scope :on_date, -> (date) { where Arel::Nodes::NamedFunction.new(:date, [arel_table[:date_time]]).eq(date) }
+  scope :since_time, -> (time) { where arel_table[:date_time].gt(time) }
+  scope :near, -> (lat, lng) {
+    where('earth_box(ll_to_earth(?, ?), 8047) @> ll_to_earth(latitude, longitude)', lat, lng).# initial BB query
+        where('earth_distance(ll_to_earth(?,?),ll_to_earth(latitude,longitude)) < 8047', lat, lng) # filter out the rest
+  }
 
   # This works like pluck (in fact the code was taken from .pluck), to return a collection of Hash without instantiating AR objects, for speed
   def self.for_json
@@ -50,5 +55,9 @@ class Earthquake < ActiveRecord::Base
       end
     end
 
+  end
+
+  def source_id
+    [source, eqid]
   end
 end

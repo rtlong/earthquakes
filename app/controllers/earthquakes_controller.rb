@@ -3,8 +3,17 @@ class EarthquakesController < ApplicationController
 
   # GET /earthquakes.json
   def index
-    earthquakes = Earthquake.minimal.for_json
-    render json: Oj.dump(earthquakes) # using Oj directly for performance
+    scope = Earthquake.minimal
+
+    scope = scope.magnitude_over(params[:over]) if params[:over]
+    scope = scope.on_date(Time.zone.at(params[:on].to_i).to_date) if params[:on]
+    scope = scope.since_time(Time.zone.at(params[:since].to_i)) if params[:since]
+    if params[:near]
+      lat, lng = params[:near].split(?,).map(&:to_f)
+      scope = scope.near(lat, lng)
+    end
+
+    render json: Oj.dump(scope.for_json) # using Oj directly for performance
   end
 
 end

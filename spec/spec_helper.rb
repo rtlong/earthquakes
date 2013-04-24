@@ -14,11 +14,6 @@ ActiveRecord::Migration.check_pending! if defined?(ActiveRecord::Migration)
 
 RSpec.configure do |config|
 
-  # If you're not using ActiveRecord, or you'd prefer not to run each of your
-  # examples within a transaction, remove the following line or assign false
-  # instead of true.
-  #config.use_transactional_fixtures = true
-
   # If true, the base class of anonymous controllers will be inferred
   # automatically. This will be the default behavior in future versions of
   # rspec-rails.
@@ -43,10 +38,11 @@ RSpec.configure do |config|
     DatabaseCleaner.clean
   end
 
-  config.alias_it_should_behave_like_to :it_looks_like, 'looks like:'
+  config.alias_it_should_behave_like_to :it_responds_with, 'responds with'
 
-
+  config.fail_fast = false
 end
+
 
 require 'vcr'
 require 'webmock/rspec'
