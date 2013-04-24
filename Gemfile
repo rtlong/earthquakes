@@ -19,6 +19,7 @@ group :development do
   gem 'guard'
   gem 'guard-rspec'
   gem 'rb-inotify'
+  gem 'progress_bar'
 end
 
 group :development, :test do

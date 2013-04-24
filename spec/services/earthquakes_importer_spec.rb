@@ -4,6 +4,8 @@ describe EarthquakesImporter do
   let(:usgs_service) { FactoryGirl.build(:usgs_service) }
   subject { EarthquakesImporter.new(usgs_service) }
 
+  its(:reporter) { should be_nil }
+
   describe 'class-level interface' do
     subject { EarthquakesImporter }
     describe '.new' do
@@ -37,6 +39,15 @@ describe EarthquakesImporter do
       matching.should have_exactly(1).earthquake
       matching.first.region.should == 'blah'
     end
+    it 'should send :call to #reporter if present' do
+      subject.reporter = proc { }
+      subject.reporter.should_receive(:call).exactly(3).times
+      subject.import_all
+    end
+  end
+
+  describe '#reporter' do
+
   end
 
 end

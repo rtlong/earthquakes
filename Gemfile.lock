@@ -41,6 +41,7 @@ GEM
     factory_girl_rails (4.2.1)
       factory_girl (~> 4.2.0)
       railties (>= 3.0.0)
+    fattr (2.2.1)
     ffaker (1.15.0)
     ffi (1.7.0)
     formatador (0.2.4)
@@ -53,6 +54,7 @@ GEM
     guard-rspec (2.5.3)
       guard (>= 1.1)
       rspec (~> 2.11)
+    highline (1.6.16)
     hike (1.2.2)
     i18n (0.6.4)
     json (1.7.7)
@@ -67,8 +69,13 @@ GEM
     minitest (4.7.2)
     multi_json (1.7.2)
     oj (2.0.10)
+    options (2.3.0)
+      fattr
     pg (0.15.1)
     polyglot (0.3.3)
+    progress_bar (0.4.0)
+      highline (~> 1.6.1)
+      options (~> 2.3.0)
     pry (0.9.12)
       coderay (~> 1.0.5)
       method_source (~> 0.8)
@@ -160,6 +167,7 @@ DEPENDENCIES
   guard-rspec
   oj
   pg
+  progress_bar
   pry-doc
   pry-rails
   rails (= 4.0.0.beta1)
