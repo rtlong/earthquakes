@@ -21,21 +21,21 @@ describe EarthquakesImporter do
     end
     it 'should create a new Earthquake for each record from the service' do
       subject.import_all
-      Earthquake.all.to_a.should have(3).earthquakes
+      Earthquake.unscoped.to_a.should have(3).earthquakes
     end
     it 'should update Earthquakes where one already exists with the same source/eqid and version is greater' do
       FactoryGirl.create(:earthquake, source: 'ak', eqid: '10691420', version: 0)
       subject.import_all
-      Earthquake.all.to_a.should have_exactly(3).earthquakes
-      matching = Earthquake.where(source: 'ak', eqid: '10691420')
+      Earthquake.unscoped.to_a.should have_exactly(3).earthquakes
+      matching = Earthquake.unscoped.where(source: 'ak', eqid: '10691420')
       matching.should have_exactly(1).earthquake
       matching.first.version.should == 3
     end
     it 'should skip Earthquakes where one already exists with a lower or equal version' do
       FactoryGirl.create(:earthquake, source: 'ak', eqid: '10691420', version: 3, region: 'blah')
       subject.import_all
-      Earthquake.all.to_a.should have_exactly(3).earthquakes
-      matching = Earthquake.where(source: 'ak', eqid: '10691420')
+      Earthquake.unscoped.to_a.should have_exactly(3).earthquakes
+      matching = Earthquake.unscoped.where(source: 'ak', eqid: '10691420')
       matching.should have_exactly(1).earthquake
       matching.first.region.should == 'blah'
     end

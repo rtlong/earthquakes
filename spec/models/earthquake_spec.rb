@@ -25,6 +25,12 @@ describe Earthquake do
     it { should validate_numericality_of :nst }
   end
 
+  describe 'default scope' do
+    it 'should only show last 7 days data' do
+      Earthquake.all.to_sql.should match(/date_time['"]? >= '?#{7.days.ago.to_date}/)
+    end
+  end
+
   describe '.magnitude_over(float)' do
     it 'should select only those with magnitude greater than given' do
       Earthquake.unscoped.magnitude_over(4.5).to_sql.should match(/magnitude['"]? > 4.5/)
@@ -50,6 +56,14 @@ describe Earthquake do
       lat, lng = 1, 2
       # N.B. I really don't know how to test these scopes...
       Earthquake.unscoped.near(lat, lng).to_sql.should match(/earth_distance\(ll_to_earth\(#{lat},\s*#{lng}\),\s*ll_to_earth\(latitude,\s*longitude\)\)\s*<\s*\d+/)
+    end
+  end
+
+  describe '.stale' do
+    subject{Earthquake.stale.to_sql}
+    it 'should select only those where date_time is more than 7 days ago' do
+      should match(/date_time['"]? < '?#{7.days.ago.to_date}/)
+      should_not match(/date_time['"]? >= '?#{7.days.ago.to_date}/)
     end
   end
 

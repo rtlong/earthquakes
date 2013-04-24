@@ -30,6 +30,7 @@ class Earthquake < ActiveRecord::Base
   validates :nst, numericality: true
   validates :depth, numericality: true
 
+  default_scope -> { where arel_table[:date_time].gteq(7.days.ago) }
   scope :minimal, -> { select(API_COLUMNS) }
   scope :magnitude_over, -> (mag) { where arel_table[:magnitude].gt(mag) }
   scope :on_date, -> (date) { where Arel::Nodes::NamedFunction.new(:date, [arel_table[:date_time]]).eq(date) }
@@ -38,6 +39,9 @@ class Earthquake < ActiveRecord::Base
     where('earth_box(ll_to_earth(?, ?), 8047) @> ll_to_earth(latitude, longitude)', lat, lng).# initial BB query
         where('earth_distance(ll_to_earth(?,?),ll_to_earth(latitude,longitude)) < 8047', lat, lng) # filter out the rest
   }
+  def self.stale
+    self.unscoped.where arel_table[:date_time].lt(7.days.ago)
+  end
 
   # This works like pluck (in fact the code was taken from .pluck), to return a collection of Hash without instantiating AR objects, for speed
   def self.for_json

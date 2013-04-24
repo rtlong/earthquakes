@@ -18,12 +18,13 @@ shared_examples_for 'an empty collection' do
   it('should be an empty array') { parsed_response.should == [] }
 end
 
-def two_days_ago;
-  2.days.ago;
+# @todo I know this is wrong... I don't know the right approach here
+def two_days_ago
+  2.days.ago
 end
 
-def two_minutes_ago;
-  2.minutes.ago;
+def two_minutes_ago
+  2.minutes.ago
 end
 
 describe "Earthquakes" do
